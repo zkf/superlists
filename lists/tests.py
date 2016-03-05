@@ -3,6 +3,7 @@ from django.test import TestCase
 import lists.views as views
 from django.http import HttpRequest
 from django.template.loader import render_to_string
+from lists.models import Item
 
 
 class HomePageTest(TestCase):
@@ -30,3 +31,23 @@ class HomePageTest(TestCase):
             {'new_item_text': new_item_text}
         )
         self.assertEqual(response.content.decode(), expected_html)
+
+
+class ItemModelTest(TestCase):
+
+    def test_can_save_and_retreive_item(self):
+        item1 = Item(text='First item')
+        item1.save()
+        item2 = Item.objects.all()[0]
+
+        self.assertEqual(item1, item2)
+
+    def test_can_save_and_retreive_items(self):
+        item1 = Item(text='First item')
+        item1.save()
+        item2 = Item(text='Second item')
+        item2.save()
+
+        items = Item.objects.all()
+        self.assertEqual(items.count(), 2)
+        self.assertEqual(set(items), set([item1, item2]))
