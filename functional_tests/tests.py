@@ -1,17 +1,16 @@
-#! /usr/bin/env python
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import unittest
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(3)
 
     def tearDown(self):
         import time
-        time.sleep(5)
+        time.sleep(1)
         self.browser.quit()
 
     def check_for_row_in_list_table(self, row_text):
@@ -21,7 +20,7 @@ class NewVisitorTest(unittest.TestCase):
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Edith goes to the homepage
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # She notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
@@ -63,6 +62,3 @@ class NewVisitorTest(unittest.TestCase):
         self.fail('Finish the test!')
 
         # Satisfied, she goes back to sleep
-
-if __name__ == '__main__':
-    unittest.main()
