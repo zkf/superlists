@@ -3,7 +3,7 @@ from django.test import TestCase
 import lists.views as views
 from django.http import HttpRequest
 from django.template.loader import render_to_string
-from lists.models import Item
+from lists.models import Item, List
 
 
 class HomePageTest(TestCase):
@@ -45,12 +45,18 @@ class NewListTest(TestCase):
             '/lists/the-only-list-in-the-world/',
         )
 
-class ItemModelTest(TestCase):
-    def test_can_save_and_retreive_items(self):
-        item1 = Item(text='First item')
+class ListAndItemModelTest(TestCase):
+    def test_saving_and_retreiving_items(self):
+        the_list = List()
+        the_list.save()
+
+        item1 = Item(text='First item', list=the_list)
         item1.save()
-        item2 = Item(text='Second item')
+        item2 = Item(text='Second item', list=the_list)
         item2.save()
+
+        saved_list = List.objects.first()
+        self.assertEqual(saved_list, the_list)
 
         items = Item.objects.all()
         self.assertEqual(items.count(), 2)
@@ -63,8 +69,9 @@ class ListViewTest(TestCase):
         self.assertTemplateUsed(response, 'lists/list.html')
 
     def test_displays_all_items(self):
-        Item.objects.create(text='Item A')
-        Item.objects.create(text='Item B')
+        the_list = List.objects.create()
+        Item.objects.create(text='Item A', list=the_list)
+        Item.objects.create(text='Item B', list=the_list)
 
         response = self.client.get('/lists/the-only-list-in-the-world/')
 
