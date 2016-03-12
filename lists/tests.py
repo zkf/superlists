@@ -7,6 +7,7 @@ from lists.models import Item
 
 
 class HomePageTest(TestCase):
+
     def test_root_url_resolves_to_home_page_view(self):
         found = resolve('/')
         self.assertEqual(found.func, views.home_page)
@@ -17,35 +18,32 @@ class HomePageTest(TestCase):
         expected_html = render_to_string('lists/home.html')
         self.assertEqual(response.content.decode(), expected_html)
 
-    def test_home_page_can_save_a_POST_request(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        new_item_text = 'A new list item'
-        request.POST['item_text'] = new_item_text
+class NewListTest(TestCase):
 
-        views.home_page(request)
+    def test_saving_a_POST_request(self):
+        new_item_text = 'A new list item'
+
+        self.client.post(
+            '/lists/new',
+            data={'item_text': new_item_text}
+        )
 
         self.assertEqual(Item.objects.count(), 1)
         item = Item.objects.first()
-        self.assertEqual(item.text, 'A new list item')
+        self.assertEqual(item.text, new_item_text)
 
-    def test_home_page_redirect_after_POST(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'A new list item'
+    def test_redirects_after_POST(self):
+        new_item_text = 'A new list item'
 
-        response = views.home_page(request)
+        response = self.client.post(
+            '/lists/new',
+            data={'item_text': new_item_text}
+        )
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'],
-                         '/lists/the-only-list-in-the-world')
-
-    def test_home_page_only_saves_items_when_necessary(self):
-        request = HttpRequest()
-        views.home_page(request)
-
-        self.assertEqual(Item.objects.count(), 0)
-
+        self.assertRedirects(
+            response,
+            '/lists/the-only-list-in-the-world/',
+        )
 
 class ItemModelTest(TestCase):
     def test_can_save_and_retreive_items(self):
