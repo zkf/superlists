@@ -37,7 +37,8 @@ class HomePageTest(TestCase):
         response = views.home_page(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'],
+                         '/lists/the-only-list-in-the-world')
 
     def test_home_page_only_saves_items_when_necessary(self):
         request = HttpRequest()
@@ -45,26 +46,8 @@ class HomePageTest(TestCase):
 
         self.assertEqual(Item.objects.count(), 0)
 
-    def test_home_page_displays_all_list_items(self):
-        Item.objects.create(text='Item A')
-        Item.objects.create(text='Item B')
-
-        request = HttpRequest()
-        response = views.home_page(request)
-
-        self.assertIn('Item A', response.content.decode())
-        self.assertIn('Item B', response.content.decode())
-
 
 class ItemModelTest(TestCase):
-
-    def test_can_save_and_retreive_item(self):
-        item1 = Item(text='First item')
-        item1.save()
-        item2 = Item.objects.all()[0]
-
-        self.assertEqual(item1, item2)
-
     def test_can_save_and_retreive_items(self):
         item1 = Item(text='First item')
         item1.save()
@@ -74,3 +57,18 @@ class ItemModelTest(TestCase):
         items = Item.objects.all()
         self.assertEqual(items.count(), 2)
         self.assertEqual(list(items), [item1, item2])
+
+
+class ListViewTest(TestCase):
+    def test_uses_list_template(self):
+        response = self.client.get('/lists/the-only-list-in-the-world/')
+        self.assertTemplateUsed(response, 'lists/list.html')
+
+    def test_displays_all_items(self):
+        Item.objects.create(text='Item A')
+        Item.objects.create(text='Item B')
+
+        response = self.client.get('/lists/the-only-list-in-the-world/')
+
+        self.assertContains(response, 'Item A')
+        self.assertContains(response, 'Item B')
