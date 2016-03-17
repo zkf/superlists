@@ -2,3 +2,4 @@ db.sqlite3
 __pycache__
 *.pyc
 .ropeproject
+assets/bower_components

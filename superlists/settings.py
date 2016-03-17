@@ -37,8 +37,16 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'lists'
+    'lists',
+    'djangobower',
 )
+
+BOWER_INSTALLED_APPS = (
+    'bootstrap#3.3.*',
+)
+
+BOWER_COMPONENTS_ROOT = \
+    os.path.join(BASE_DIR, 'assets')
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -101,3 +109,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATICFILES_STORAGE = \
+#     'whitenoise.django.GzipManifestStaticFilesStorage'
+
+STATICFILES_FINDERS = (
+   'djangobower.finders.BowerFinder',
+   'django.contrib.staticfiles.finders.FileSystemFinder',
+   'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
