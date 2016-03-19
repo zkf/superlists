@@ -1,9 +1,25 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import sys
 
 
 class NewVisitorTest(StaticLiveServerTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        for arg in sys.argv:
+            if 'liveserver' in arg:
+                cls.live_server_url = 'http://' + arg.split('=')[1]
+                cls.external_live_server = True
+                return
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.external_live_server:
+            super().tearDownClass()
+
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(3)
@@ -107,5 +123,3 @@ class NewVisitorTest(StaticLiveServerTestCase):
             win_size['width']/2,
             delta=5
         )
-
-
