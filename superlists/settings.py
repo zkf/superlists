@@ -25,7 +25,7 @@ SECRET_KEY = '04to81dg9dy=jbnq#r@8)vwwtgy02%#h)b%!f!_16lx#4289@j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'lists',
     'djangobower',
@@ -49,6 +50,8 @@ BOWER_COMPONENTS_ROOT = \
     os.path.join(BASE_DIR, 'assets')
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -56,7 +59,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'superlists.urls'
@@ -110,9 +112,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, '../static'))
-# STATICFILES_STORAGE = \
-#     'whitenoise.django.GzipManifestStaticFilesStorage'
-
+STATICFILES_STORAGE = \
+    'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_FINDERS = (
    'djangobower.finders.BowerFinder',
