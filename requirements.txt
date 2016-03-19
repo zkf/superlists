@@ -1,0 +1,9 @@
+colorama==0.3.7
+Django==1.8.9
+django-bower==5.1.0
+green==2.3.0
+python-termstyle==0.1.10
+selenium==2.52.0
+six==1.10.0
+wheel==0.29.0
+whitenoise==3.0b1
